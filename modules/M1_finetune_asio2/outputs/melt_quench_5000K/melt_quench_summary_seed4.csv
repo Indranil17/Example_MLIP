@@ -1,0 +1,2 @@
+driver,seed,finished,error,steps_done,wall_s,ms_per_step,dmin_end_A,start_label,t_melt_K,melt_ps,ell2_A2,msd_Si_end_hold_A2,msd_O_end_hold_A2,bridges_kept_end_hold,bridges_kept_end,network_reset,density_end,frac_Si_CN4_end,frac_O_CN2_end,ring_mean_length_atoms_end
+naive,4,True,,72000,3315.5678797499277,46.04955388541566,1.5527162166299,silica-mq_10-14_13,5000.0,20.0,6.026314298216395,93.03469831435159,121.64690970169627,0.025252525252525252,0.045454545454545456,True,2.2480283540774195,1.0,1.0,10.931297709923665

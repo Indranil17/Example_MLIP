@@ -1,0 +1,16 @@
+{
+  "timestamp_utc": "2026-10-08T00:27:06+00:00",
+  "test": "data/splits/a-SiO2/test.xyz",
+  "frame": 0,
+  "system": "a-SiO2",
+  "n_atoms": 300,
+  "temps_K": [
+    300.0,
+    1500.0
+  ],
+  "ps": 20.0,
+  "dt_fs": 1.0,
+  "thermostat": "Langevin, friction 0.01 per fs",
+  "device": "cuda",
+  "dtype": "float64"
+}

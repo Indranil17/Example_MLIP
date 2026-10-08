@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N am26_md
+#PBS -q <<GPU_QUEUE>>
+#PBS -l select=1:ncpus=<<NCPUS>>:ngpus=1:mem=<<MEM_GB>>gb
+#PBS -l walltime=<<HH:MM:SS>>
+#PBS -j oe
+# 20 ps Langevin NVT at 300 K and 1500 K on the first held-out silica cell, zero-shot against the
+# naive fine-tune. Chain it on the fine-tune job:  qsub -W depend=afterok:<fine-tune job id> <this file>
+# Copy to job_md_stability.local.pbs, replace every <<...>>, then submit the copy.
+
+set -euo pipefail
+REPO="<<REPO>>"
+<<ENV_SETUP>>
+conda activate examples-mlip
+
+cd "$REPO"
+echo "host $(hostname)  start $(date -u +%FT%TZ)"
+nvidia-smi || true
+test -f modules/M1_finetune_asio2/checkpoints/am26_asio2_mpa0_naive.model || { echo "naive checkpoint missing" >&2; exit 2; }
+
+python modules/M1_finetune_asio2/md_stability.py \
+    --device cuda --test data/splits/a-SiO2/test.xyz --frame 0 --temps 300 1500 --ps 20 \
+    --model zero-shot=models_cache/mace-mpa-0-medium.model \
+    --model naive=modules/M1_finetune_asio2/checkpoints/am26_asio2_mpa0_naive.model
+
+echo "end $(date -u +%FT%TZ)"

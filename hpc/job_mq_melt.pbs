@@ -1,0 +1,39 @@
+#!/bin/bash
+#PBS -N am26_melt
+#PBS -q <<GPU_QUEUE>>
+#PBS -l select=1:ncpus=<<NCPUS>>:ngpus=1:mem=<<MEM_GB>>gb
+#PBS -l walltime=<<HH:MM:SS>>
+#PBS -j oe
+# One melt-quench run: the SEED-th AM26 10^14 K/s cell, NVT at its density, T_MELT for MELT_PS,
+# cooled at 10^14 K/s to 300 K, held 5 ps. Records whether the hold reset the network. One run per
+# job so several GPUs work in parallel; every job writes into the same folder, one file per run.
+#   for s in 0 1 2 3; do qsub -v SEED=$s job_mq_melt.local.pbs; done
+#   qsub -v SEED=4,TRAJ=1 job_mq_melt.local.pbs      # also saves frames for the video
+# Optional: MODEL=zero-shot, T_MELT (default 5000), MELT_PS (default 20).
+# Copy to job_mq_melt.local.pbs, replace every <<...>>, then submit the copy.
+
+set -euo pipefail
+SEED="${SEED:-0}"; MODEL="${MODEL:-naive}"; T_MELT="${T_MELT:-5000}"; MELT_PS="${MELT_PS:-20}"; TRAJ="${TRAJ:-0}"
+REPO="<<REPO>>"
+<<ENV_SETUP>>
+conda activate examples-mlip
+
+cd "$REPO"
+echo "host $(hostname)  start $(date -u +%FT%TZ)  seed $SEED  model $MODEL  T_melt $T_MELT  melt_ps $MELT_PS"
+nvidia-smi || true
+CK=modules/M1_finetune_asio2/checkpoints
+if [ "$MODEL" = "zero-shot" ]; then
+  MODELS=(--model "zero-shot=models_cache/mace-mpa-0-medium.model")
+  OUT=modules/M1_finetune_asio2/outputs/melt_quench_${T_MELT}K_zeroshot
+else
+  MODELS=(--model "naive=$CK/am26_asio2_mpa0_naive.model")
+  for s in 1 2; do [ -f "$CK/am26_asio2_mpa0_naive_s${s}.model" ] && MODELS+=(--model "s${s}=$CK/am26_asio2_mpa0_naive_s${s}.model"); done
+  OUT=modules/M1_finetune_asio2/outputs/melt_quench_${T_MELT}K
+fi
+EXTRA=()
+if [ "$TRAJ" = "1" ]; then EXTRA=(--save-traj --save-every 250); fi
+
+python modules/M1_finetune_asio2/melt_quench.py --device cuda --seeds 1 --first-seed "$SEED" \
+    --t-melt "$T_MELT" --melt-ps "$MELT_PS" --rate-K-per-ps 100 --out "$OUT" "${MODELS[@]}" "${EXTRA[@]}"
+
+echo "end $(date -u +%FT%TZ)"

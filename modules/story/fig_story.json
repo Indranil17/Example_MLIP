@@ -1,0 +1,6 @@
+{
+  "prdf_engine": "CRISP",
+  "generated_cells": 5,
+  "am26_reference_cells": 20,
+  "mq_dir": "modules/M1_finetune_asio2/outputs/melt_quench_5000K"
+}

@@ -1,0 +1,53 @@
+# M1, arm A: naive fine-tuning of MACE-MPA-0 on AM26 a-SiO2, tested on a random quarter of the cells.
+# Split: data/make_splits.py --system a-SiO2. AM26 has no quench-rate key, so this falls back to a random
+# hold-out of 20 cells. The quench-rate hold-outs (rate14, rate11) reuse this file with the train, valid
+# and test files overridden; see hpc/README.md.
+# Run from the repository root:  mace_run_train --config modules/M1_finetune_asio2/finetune_naive.yaml
+# Keys are mace_run_train flag names. Paths are relative to the repository root.
+# Hyperparameters follow the practical recommendations of Tompa et al., arXiv:2606.12704 (2026):
+# consistent E0s via model-aware re-estimation, zero weight decay, a method-appropriate learning rate,
+# constant loss weights. Nothing here has been tuned on the test set.
+
+name: am26_asio2_mpa0_naive
+seed: 0
+
+# The job script downloads this file once from the URL in modules/M0_foundation_triage/models.yaml.
+# A path is used rather than the short name so that the exact checkpoint is pinned and hashed.
+foundation_model: models_cache/mace-mpa-0-medium.model
+multiheads_finetuning: False
+
+train_file: data/splits/a-SiO2/train.xyz
+valid_file: data/splits/a-SiO2/valid.xyz
+test_file: data/splits/a-SiO2/test.xyz
+energy_key: REF_energy
+forces_key: REF_forces
+compute_stress: False
+
+E0s: estimated                        # model-aware re-estimation (mace-torch 0.3.16); bypassed if isolated atoms are present
+loss: universal                       # Huber-type loss
+energy_weight: 1.0
+forces_weight: 10.0
+stress_weight: 0.0
+
+batch_size: 2                         # ~300-atom cells
+valid_batch_size: 2
+max_num_epochs: 150
+lr: 0.0005
+weight_decay: 0.0
+ema: True
+ema_decay: 0.99
+scheduler_patience: 10
+patience: 40
+eval_interval: 1
+error_table: PerAtomRMSE
+clip_grad: 10.0
+
+default_dtype: float64
+device: cuda
+save_cpu: True
+restart_latest: True
+
+results_dir: modules/M1_finetune_asio2/results
+checkpoints_dir: modules/M1_finetune_asio2/checkpoints
+model_dir: modules/M1_finetune_asio2/checkpoints
+log_dir: modules/M1_finetune_asio2/logs

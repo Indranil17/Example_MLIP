@@ -1,0 +1,45 @@
+#!/bin/bash
+#PBS -N am26_ft_x
+#PBS -q <<GPU_QUEUE>>
+#PBS -l select=1:ncpus=<<NCPUS>>:ngpus=1:mem=<<MEM_GB>>gb
+#PBS -l walltime=<<HH:MM:SS>>
+#PBS -j oe
+# General fine-tune job: any YAML, any split directory, optional seed override.
+# Variables (qsub -v, comma-separated, no spaces inside values):
+#   CONFIG  path to the YAML                     SPLIT  split directory holding test.xyz
+#   NAME    model name = checkpoint file stem    SEED   optional; adds --seed SEED --name NAME
+#   TRAIN   optional alternative training file (subset or noisy labels); adds --train_file TRAIN --name NAME
+#   OPTS    optional colon-separated key=value overrides, e.g. OPTS=max_num_epochs=30:num_samples_pt=1000
+# Copy to job_finetune_general.local.pbs, replace every <<...>>, then submit the copy.
+
+set -euo pipefail
+: "${CONFIG:?set CONFIG}"; : "${SPLIT:?set SPLIT}"; : "${NAME:?set NAME}"
+EXTRA=""
+if [ -n "${SEED:-}" ]; then EXTRA="$EXTRA --seed $SEED --name $NAME"; fi
+if [ -n "${TRAIN:-}" ]; then EXTRA="$EXTRA --train_file $TRAIN --name $NAME"; fi
+if [ -n "${OPTS:-}" ]; then
+  IFS=: read -ra KV <<< "$OPTS"
+  for kv in "${KV[@]}"; do EXTRA="$EXTRA --${kv%%=*} ${kv#*=}"; done
+  EXTRA="$EXTRA --name $NAME"
+fi
+REPO="<<REPO>>"
+<<ENV_SETUP>>
+conda activate examples-mlip
+
+cd "$REPO"
+echo "host $(hostname)  start $(date -u +%FT%TZ)  CONFIG=$CONFIG SPLIT=$SPLIT NAME=$NAME SEED=${SEED:-none}"
+nvidia-smi || true
+test -f "$SPLIT/test.xyz" || { echo "missing $SPLIT/test.xyz; make the split first" >&2; exit 2; }
+python -c "from casebook.models import ensure_file; ensure_file('https://github.com/ACEsuit/mace-mp/releases/download/mace_mpa_0/mace-mpa-0-medium.model', 'models_cache')"
+
+# shellcheck disable=SC2086
+mace_run_train --config "$CONFIG" $EXTRA
+
+python modules/M1_finetune_asio2/evaluate.py \
+    --device cuda \
+    --test "$SPLIT/test.xyz" \
+    --out "modules/M1_finetune_asio2/outputs/$NAME" \
+    --model zero-shot=models_cache/mace-mpa-0-medium.model \
+    --model "$NAME=modules/M1_finetune_asio2/checkpoints/$NAME.model"
+
+echo "end $(date -u +%FT%TZ)"

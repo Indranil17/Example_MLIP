@@ -1,0 +1,15 @@
+{
+  "source": "train.xyz",
+  "fraction": 0.1,
+  "n_corrupted": 5,
+  "seed": 0,
+  "sigma_force_meV_A": 300.0,
+  "sigma_energy_meV_atom": 50.0,
+  "corrupted_am26_index": [
+    438,
+    445,
+    479,
+    487,
+    493
+  ]
+}

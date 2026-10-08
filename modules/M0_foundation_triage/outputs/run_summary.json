@@ -1,0 +1,56 @@
+{
+  "timestamp_utc": "2026-10-07T19:14:44+00:00",
+  "device": "cpu",
+  "dtype": "float64",
+  "dispersion": false,
+  "models": [
+    {
+      "name": "MACE-MPA-0",
+      "loader": "mace_mp",
+      "model": "medium-mpa-0",
+      "url": "https://github.com/ACEsuit/mace-mp/releases/download/mace_mpa_0/mace-mpa-0-medium.model",
+      "head": null,
+      "licence": "MIT"
+    },
+    {
+      "name": "MACE-MP-0b3",
+      "loader": "mace_mp",
+      "model": "medium-0b3",
+      "url": "https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0b3/mace-mp-0b3-medium.model",
+      "head": null,
+      "licence": "MIT"
+    },
+    {
+      "name": "MACE-MH-1",
+      "loader": "file",
+      "model": null,
+      "url": "https://github.com/ACEsuit/mace-foundations/releases/download/mace_mh_1/mace-mh-1.model",
+      "head": "omat_pbe",
+      "licence": "ASL"
+    }
+  ],
+  "systems": {
+    "a-SiO2": {
+      "n_frames": 80,
+      "n_atoms_total": 24000,
+      "spearman_rho_spread_vs_error": 0.5109031464173666,
+      "models_in_spread": [
+        "MACE-MPA-0",
+        "MACE-MP-0b3",
+        "MACE-MH-1"
+      ]
+    },
+    "a-C": {
+      "n_frames": 100,
+      "n_atoms_total": 21600,
+      "spearman_rho_spread_vs_error": 0.4104150840712962,
+      "models_in_spread": [
+        "MACE-MPA-0",
+        "MACE-MP-0b3",
+        "MACE-MH-1"
+      ]
+    }
+  },
+  "mace_torch_version": "0.3.16",
+  "torch_version": "2.12.1+cu130"
+}

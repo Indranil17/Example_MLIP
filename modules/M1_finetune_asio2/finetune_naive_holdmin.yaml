@@ -1,0 +1,48 @@
+# M1, a repeat of arm A. This file was written to hold out the slowest quench rate with
+#   data/make_splits.py --system a-SiO2 --holdout min --out data/splits/a-SiO2_holdmin
+# but AM26 has no quench-rate key, so that command fell back to the same random split as arm A
+# and this run repeats arm A. It is kept and reported as a repeat. The slowest-rate hold-out
+# that was meant here is the rate11 run (finetune_naive.yaml on data/splits/a-SiO2_rate11).
+# Run from the repository root:  mace_run_train --config modules/M1_finetune_asio2/finetune_naive_holdmin.yaml
+
+name: am26_asio2_mpa0_naive_holdmin
+seed: 0
+
+foundation_model: models_cache/mace-mpa-0-medium.model
+multiheads_finetuning: False
+
+train_file: data/splits/a-SiO2_holdmin/train.xyz
+valid_file: data/splits/a-SiO2_holdmin/valid.xyz
+test_file: data/splits/a-SiO2_holdmin/test.xyz
+energy_key: REF_energy
+forces_key: REF_forces
+compute_stress: False
+
+E0s: estimated
+loss: universal
+energy_weight: 1.0
+forces_weight: 10.0
+stress_weight: 0.0
+
+batch_size: 2
+valid_batch_size: 2
+max_num_epochs: 150
+lr: 0.0005
+weight_decay: 0.0
+ema: True
+ema_decay: 0.99
+scheduler_patience: 10
+patience: 40
+eval_interval: 1
+error_table: PerAtomRMSE
+clip_grad: 10.0
+
+default_dtype: float64
+device: cuda
+save_cpu: True
+restart_latest: True
+
+results_dir: modules/M1_finetune_asio2/results
+checkpoints_dir: modules/M1_finetune_asio2/checkpoints
+model_dir: modules/M1_finetune_asio2/checkpoints
+log_dir: modules/M1_finetune_asio2/logs

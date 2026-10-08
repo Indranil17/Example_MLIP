@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it as below and cite the datasets and methods listed in CREDITS.md."
+title: "Examples_MLIP: fine-tuning, validating and trusting MACE potentials on open amorphous data"
+type: software
+authors:
+  - family-names: Saha
+    given-names: Indranil
+    orcid: "https://orcid.org/0009-0005-6111-3599"
+version: 0.0.1
+date-released: 2026-10-08
+license: MIT
+repository-code: "https://github.com/Indranil17/Examples_MLIP"

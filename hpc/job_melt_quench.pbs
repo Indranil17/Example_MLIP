@@ -1,0 +1,33 @@
+#!/bin/bash
+#PBS -N am26_mq
+#PBS -q <<GPU_QUEUE>>
+#PBS -l select=1:ncpus=<<NCPUS>>:ngpus=1:mem=<<MEM_GB>>gb
+#PBS -l walltime=<<HH:MM:SS>>
+#PBS -j oe
+# The FIRST melt-quench attempt, kept so it can be reproduced: 3000 K for 10 ps, which did not melt
+# the network. The 5000 K runs behind the README use job_mq_melt.pbs.
+# Runs the arm A model (and the seed committee if present), then the zero-shot model, four runs each.
+# Copy to job_melt_quench.local.pbs, replace every <<...>>, then submit the copy.
+
+set -euo pipefail
+REPO="<<REPO>>"
+<<ENV_SETUP>>
+conda activate examples-mlip
+
+cd "$REPO"
+echo "host $(hostname)  start $(date -u +%FT%TZ)"
+nvidia-smi || true
+CK=modules/M1_finetune_asio2/checkpoints
+test -f "$CK/am26_asio2_mpa0_naive.model" || { echo "arm A checkpoint missing" >&2; exit 2; }
+MODELS=(--model "naive=$CK/am26_asio2_mpa0_naive.model")
+for s in 1 2; do
+  if [ -f "$CK/am26_asio2_mpa0_naive_s${s}.model" ]; then MODELS+=(--model "s${s}=$CK/am26_asio2_mpa0_naive_s${s}.model"); fi
+done
+
+python modules/M1_finetune_asio2/melt_quench.py --device cuda --seeds 4 --rate-K-per-ps 100 --t-melt 3000 --melt-ps 10 \
+    --out modules/M1_finetune_asio2/outputs/melt_quench_naive "${MODELS[@]}"
+python modules/M1_finetune_asio2/melt_quench.py --device cuda --seeds 4 --rate-K-per-ps 100 --t-melt 3000 --melt-ps 10 \
+    --out modules/M1_finetune_asio2/outputs/melt_quench_zeroshot \
+    --model zero-shot=models_cache/mace-mpa-0-medium.model
+
+echo "end $(date -u +%FT%TZ)"

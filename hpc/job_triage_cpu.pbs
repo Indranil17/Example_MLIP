@@ -1,0 +1,24 @@
+#!/bin/bash
+#PBS -N am26_triage
+#PBS -q <<CPU_QUEUE>>
+#PBS -l select=1:ncpus=<<NCPUS>>:mem=<<MEM_GB>>gb:scratch_local=<<SCRATCH_GB>>gb
+#PBS -l walltime=<<HH:MM:SS>>
+#PBS -j oe
+# M0 foundation-model triage and M2 support criterion on CPU.
+# Copy to job_triage_cpu.local.pbs, replace every <<...>>, then submit the copy.
+
+set -euo pipefail
+REPO="<<REPO>>"                     # absolute path to the Examples_MLIP checkout
+<<ENV_SETUP>>                        # e.g. a module load line and/or `source <conda>/etc/profile.d/conda.sh`
+conda activate examples-mlip
+
+cd "$REPO"
+export OMP_NUM_THREADS=<<NCPUS>>
+export MKL_NUM_THREADS=<<NCPUS>>
+echo "host $(hostname)  start $(date -u +%FT%TZ)  cpus <<NCPUS>>"
+
+python data/get_am26.py                       # verifies the recorded checksum
+python modules/M0_foundation_triage/run.py --systems a-SiO2 a-C --device cpu
+python modules/M2_ensemble_support/run.py --system a-SiO2 --group-key label --group-regex '10-(\d+)'
+
+echo "end $(date -u +%FT%TZ)"

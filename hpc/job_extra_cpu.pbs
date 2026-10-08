@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N am26_extra
+#PBS -q <<CPU_QUEUE>>
+#PBS -l select=1:ncpus=<<NCPUS>>:mem=<<MEM_GB>>gb
+#PBS -l walltime=<<HH:MM:SS>>
+#PBS -j oe
+# Net-force audit of the AM26 labels (M4), support criterion on a-C (M2), zero-shot triage of the
+# remaining AM26 systems with the MIT models into a separate outputs folder.
+# Copy to job_extra_cpu.local.pbs, replace every <<...>>, then submit the copy.
+
+set -euo pipefail
+REPO="<<REPO>>"
+<<ENV_SETUP>>
+conda activate examples-mlip
+
+cd "$REPO"
+export OMP_NUM_THREADS=<<NCPUS>>
+export MKL_NUM_THREADS=<<NCPUS>>
+echo "host $(hostname)  start $(date -u +%FT%TZ)"
+
+python modules/M4_label_quality/run.py
+python modules/M2_ensemble_support/run.py --system a-C --group-key label --group-regex 'mq_([0-9.]+)'
+python modules/M0_foundation_triage/run.py --systems a-Si a-LiPS a-GST --only MACE-MPA-0 MACE-MP-0b3 --device cpu \
+    --out modules/M0_foundation_triage/outputs_other_systems
+
+echo "end $(date -u +%FT%TZ)"

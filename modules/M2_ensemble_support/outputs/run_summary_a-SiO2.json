@@ -1,0 +1,63 @@
+{
+  "timestamp_utc": "2026-10-07T22:06:08+00:00",
+  "system": "a-SiO2",
+  "group_key": "label",
+  "group_regex": "10-(\\d+)",
+  "q_conv": 0.2,
+  "n_resamples": 200,
+  "seed": 0,
+  "groups": {
+    "11": {
+      "n_cells": 20,
+      "descriptors": [
+        "density",
+        "frac_Si_CN4",
+        "frac_O_CN2",
+        "SiO_cdf",
+        "SiSi_cdf",
+        "OO_cdf",
+        "ring_pmf"
+      ],
+      "rings_included": true
+    },
+    "12": {
+      "n_cells": 20,
+      "descriptors": [
+        "density",
+        "frac_Si_CN4",
+        "frac_O_CN2",
+        "SiO_cdf",
+        "SiSi_cdf",
+        "OO_cdf",
+        "ring_pmf"
+      ],
+      "rings_included": true
+    },
+    "13": {
+      "n_cells": 20,
+      "descriptors": [
+        "density",
+        "frac_Si_CN4",
+        "frac_O_CN2",
+        "SiO_cdf",
+        "SiSi_cdf",
+        "OO_cdf",
+        "ring_pmf"
+      ],
+      "rings_included": true
+    },
+    "14": {
+      "n_cells": 20,
+      "descriptors": [
+        "density",
+        "frac_Si_CN4",
+        "frac_O_CN2",
+        "SiO_cdf",
+        "SiSi_cdf",
+        "OO_cdf",
+        "ring_pmf"
+      ],
+      "rings_included": true
+    }
+  }
+}

@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "casebook"
+version = "0.0.1"
+description = "Helpers for the Examples_MLIP repository: data handling, metrics, structure descriptors and the ensemble support criterion."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Indranil Saha" }]
+requires-python = ">=3.10"
+dependencies = [
+  "numpy",
+  "scipy",
+  "pandas",
+  "pyyaml",
+  "ase>=3.23",
+]
+
+[project.optional-dependencies]
+mlip = ["mace-torch==0.3.16"]
+rings = ["matscipy"]
+plots = ["matplotlib"]
+# tools/story_*.py; CRISP itself comes from its GitHub repository, see CREDITS.md
+story = ["matplotlib", "imageio-ffmpeg", "joblib"]
+# notebooks/tour.ipynb, which reads only committed files
+notebook = ["matplotlib", "nbconvert", "ipykernel"]
+test = ["pytest"]
+
+[tool.setuptools.packages.find]
+include = ["casebook*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

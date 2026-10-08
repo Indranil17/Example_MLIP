@@ -1,0 +1,54 @@
+# data and structures: downloaded or generated at run time, never committed
+# (AM26 has no licence; check_repo.sh also refuses any tracked .xyz)
+*.extxyz
+*.xyz
+data/am26_download/
+
+# model checkpoints and caches
+*.model
+*.pt
+*.pth
+models_cache/
+checkpoints/
+modules/M1_finetune_asio2/runs/
+modules/M1_finetune_asio2/logs/
+modules/M1_finetune_asio2/results/
+modules/M3_vitriflow_baseline/runs/
+
+# large raw outputs; CSV and PNG summaries are committed
+*.npz
+*.pkl
+*.traj
+*.log
+
+# filled-in HPC job scripts, job output files and local notes carry account paths; only the templates are committed
+hpc/*.local.pbs
+hpc/LOCAL_NOTES.md
+hpc/job_outputs/
+am26_*.o*
+*.o[0-9]*
+
+# local word list for tools/check_repo.sh
+tools/check_repo.words
+
+# cross-check that needs ZIPPER, which is not public yet; kept locally, not in git
+modules/story/zipper_crosscheck/
+
+# python
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# prep-job scratch outputs
+.smoke_m0/
+data/inspect_am26.log

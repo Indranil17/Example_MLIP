@@ -1,0 +1,22 @@
+{
+  "timestamp_utc": "2026-10-08T11:02:36+00:00",
+  "driver": "naive=modules/M1_finetune_asio2/checkpoints/am26_asio2_mpa0_naive.model",
+  "committee": [
+    "s1=modules/M1_finetune_asio2/checkpoints/am26_asio2_mpa0_naive_s1.model",
+    "s2=modules/M1_finetune_asio2/checkpoints/am26_asio2_mpa0_naive_s2.model"
+  ],
+  "seeds": 1,
+  "first_seed": 4,
+  "t_melt_K": 5000.0,
+  "melt_ps": 20.0,
+  "rate_K_per_ps": 100.0,
+  "group_key": "label",
+  "group_regex": "10-(\\d+)",
+  "t_end_K": 300.0,
+  "hold_ps": 5.0,
+  "dt_fs": 1.0,
+  "ensemble": "NVT Langevin at the AM26 cell density",
+  "reference_group": "label ~ 10-(\\d+) = 14 (10^14 K/s)",
+  "device": "cuda",
+  "dtype": "float32"
+}

@@ -1,0 +1,10 @@
+{
+  "timestamp_utc": "2026-10-07T21:17:15+00:00",
+  "test_file": "data/splits/a-C/test.xyz",
+  "heldout_group_values": [
+    "1.5",
+    "2.0"
+  ],
+  "device": "cuda",
+  "dtype": "float64"
+}

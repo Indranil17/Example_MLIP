@@ -1,0 +1,9 @@
+{
+  "timestamp_utc": "2026-10-07T21:41:24+00:00",
+  "test_file": "data/splits/a-SiO2/test.xyz",
+  "heldout_group_values": [
+    "None"
+  ],
+  "device": "cuda",
+  "dtype": "float64"
+}

@@ -1,0 +1,2 @@
+driver,seed,finished,error,steps_done,wall_s,ms_per_step,dmin_end_A,start_am26_index,density_end,frac_Si_CN4_end,frac_O_CN2_end,ring_mean_length_atoms_end
+naive,0,True,,42000,2305.8098295191303,54.90023403616977,1.54473728863388,-1,2.2234082998180664,0.99,0.995,11.038167938931299

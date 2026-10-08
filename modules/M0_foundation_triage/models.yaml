@@ -1,0 +1,30 @@
+# Foundation models evaluated in M0. Order is the order in output tables.
+# Licences from https://github.com/ACEsuit/mace-foundations (checked 7 October 2026).
+# Dispersion is off for every model; the README says so.
+models:
+  - name: MACE-MPA-0
+    loader: mace_mp
+    model: medium-mpa-0
+    url: https://github.com/ACEsuit/mace-mp/releases/download/mace_mpa_0/mace-mpa-0-medium.model
+    licence: MIT
+    redistribute: true
+    note: MPTrj + sAlex, PBE(+U). Base model for the M1 fine-tune.
+
+  - name: MACE-MP-0b3
+    loader: mace_mp
+    model: medium-0b3
+    url: https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0b3/mace-mp-0b3-medium.model
+    licence: MIT
+    redistribute: true
+    note: MPTrj, PBE(+U); the model the AM26 paper also evaluates.
+
+  - name: MACE-MH-1
+    loader: file
+    url: https://github.com/ACEsuit/mace-foundations/releases/download/mace_mh_1/mace-mh-1.model
+    head: omat_pbe
+    licence: ASL
+    redistribute: false
+    note: Cross-domain multihead model; omat_pbe head gives a PBE-level materials baseline. Evaluated only. Heavy on CPU; drop it if it stalls.
+
+# If a mace_mp name is rejected by your mace-torch version, switch that entry to
+# loader: file so the .model is downloaded from `url` into models_cache/.

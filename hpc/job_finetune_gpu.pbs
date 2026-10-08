@@ -1,0 +1,34 @@
+#!/bin/bash
+#PBS -N am26_ft_<<ARM>>
+#PBS -q <<GPU_QUEUE>>
+#PBS -l select=1:ncpus=<<NCPUS>>:ngpus=1:mem=<<MEM_GB>>gb:scratch_local=<<SCRATCH_GB>>gb
+#PBS -l walltime=<<HH:MM:SS>>
+#PBS -j oe
+# M1 fine-tune of MACE-MPA-0 on AM26 a-SiO2. ARM is "naive" or "replay".
+# Copy to job_finetune_gpu.local.pbs, replace every <<...>>, then submit the copy.
+
+set -euo pipefail
+REPO="<<REPO>>"
+ARM="<<ARM>>"
+<<ENV_SETUP>>
+conda activate examples-mlip
+
+cd "$REPO"
+echo "host $(hostname)  start $(date -u +%FT%TZ)"
+nvidia-smi || true
+python -c "import torch, mace; print('torch', torch.__version__, 'cuda', torch.cuda.is_available(), 'mace', getattr(mace, '__version__', '?'))"
+
+# random 25 percent hold-out (AM26 has no quench-rate key; see data/README.md for the rate splits)
+test -f data/splits/a-SiO2/train.xyz || python data/make_splits.py --system a-SiO2
+# pin the base checkpoint: download once into models_cache/ and print its sha256
+python -c "from casebook.models import ensure_file; ensure_file('https://github.com/ACEsuit/mace-mp/releases/download/mace_mpa_0/mace-mpa-0-medium.model', 'models_cache')"
+mace_run_train --config "modules/M1_finetune_asio2/finetune_${ARM}.yaml"
+
+# one output folder per arm, so a second arm never overwrites the first
+python modules/M1_finetune_asio2/evaluate.py \
+    --out "modules/M1_finetune_asio2/outputs/am26_asio2_mpa0_${ARM}" \
+    --device cuda \
+    --model zero-shot=models_cache/mace-mpa-0-medium.model \
+    --model "${ARM}=modules/M1_finetune_asio2/checkpoints/am26_asio2_mpa0_${ARM}.model"
+
+echo "end $(date -u +%FT%TZ)"

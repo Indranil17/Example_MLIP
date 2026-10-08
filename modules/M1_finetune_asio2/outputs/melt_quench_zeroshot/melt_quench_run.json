@@ -1,0 +1,16 @@
+{
+  "timestamp_utc": "2026-10-08T02:24:59+00:00",
+  "driver": "zero-shot=models_cache/mace-mpa-0-medium.model",
+  "committee": [],
+  "seeds": 4,
+  "t_melt_K": 3000.0,
+  "melt_ps": 10.0,
+  "rate_K_per_ps": 100.0,
+  "t_end_K": 300.0,
+  "hold_ps": 5.0,
+  "dt_fs": 1.0,
+  "ensemble": "NVT Langevin at the AM26 cell density",
+  "reference_group": "all a-SiO2 cells (no quench-rate key found)",
+  "device": "cuda",
+  "dtype": "float32"
+}

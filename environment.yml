@@ -1,0 +1,22 @@
+name: examples-mlip
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib
+  - pyyaml
+  - ase>=3.23
+  - matscipy
+  - pytest
+  - pip
+  - joblib
+  - pip:
+      # CPU build of torch is pulled in by mace-torch. For a GPU node install the
+      # matching CUDA build of torch first, then mace-torch, following the MACE README.
+      - mace-torch==0.3.16
+      - imageio-ffmpeg       # mp4 writer for tools/story_video.py
+      # The story figures also need CRISP's development version for the coordination
+      # module: clone https://github.com/Indranil17/CRISP and pass the checkout with --crisp-src.
